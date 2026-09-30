@@ -1,4 +1,4 @@
-# Mueblería Hermanos Jota — E-commerce Académico (Sprint 1 y 2)
+# Mueblería Hermanos Jota — E-commerce Full Stack (Sprint 3 y 4)
 
 **Curso**: Full Stack Developer — ITBA Educación Ejecutiva  
 **Comisión**: Aula General  
@@ -9,68 +9,84 @@
 
 ---
 
-##  Resumen del Proyecto
+## 📌 Resumen del Proyecto
 
-Desarrollo e implementación del sitio E-commerce interactivo para **Mueblería Hermanos Jota**, construido **únicamente con tecnologías del lado del cliente: HTML5 semántico, CSS3 responsivo y JavaScript Vanilla**.
-
-El proyecto simula una experiencia de compra completa sin backend, gestionando el catálogo, el estado del carrito (`localStorage`), la carga asíncrona y la interactividad vía eventos del DOM.
-
----
-
-##  Requerimientos Funcionales y Técnicos Cumplidos
-
-### 1. Páginas e Interfaz de Usuario
-- **Inicio (`index.html`)**: Header con Isotipo Oficial `hj` (Siena Tostado `#A0522D`, dimensiones mínimas de 120px y padding de seguridad según Manual de Marca), Hero Banner principal, selección de 4 productos destacados cargados dinámicamente mediante simulación asíncrona (`setTimeout` + `Promise`) y Footer informativo.
-- **Catálogo (`productos.html`)**: Grilla responsiva de productos obtenida desde `js/productos.js`, campo de búsqueda dinámica en tiempo real por texto, filtros interactivos por categoría (*Living*, *Comedor*, *Guardado*, *Dormitorio*, *Trabajo*), contador de resultados y enlaces a la vista de detalle.
-- **Detalle de Producto (`producto.html`)**: Parseo dinámico del ID desde la URL (`?id=X`), imagen en alta resolución, ficha técnica detallada (madera nativa, acabado, medidas, origen, garantía), selector interactivo de cantidad pre-compra y botón "Añadir al Carrito".
-- **Contacto (`contacto.html`)**: Formulario con campos Nombre, Email y Mensaje. Validación client-side en tiempo real con JavaScript, prevención de envío si hay errores e interacción mediante el DOM mostrando la confirmación de éxito sin recargar la página.
-
-###  Estado Global de Carrito
-- **Módulo `js/carrito.js`**: Implementación con `localStorage` (`hj_cart_items_v2`).
-- **Header Badge**: Contador de items en la barra de navegación activo en todas las páginas.
-- **Drawer Modal**: Carrito lateral desplegable con modificación de cantidades (`+` / `-`), eliminación individual de productos, botón de vaciar carrito, cálculo del total acumulado y simulación de Checkout.
-- **Toasts**: Mensajes emergentes temporales al agregar o quitar productos.
-
-###  Código Semántico y Estilos
-- **HTML5**: Etiquetas semánticas obligatorias (`<header>`, `<main>`, `<nav>`, `<section>`, `<article>`, `<dl>`, `<footer>`).
-- **CSS3**: Archivo externo `css/styles.css` 100% responsivo (Mobile First), utilizando Flexbox y CSS Grid. Paleta de colores oficial: Siena Tostado (`#A0522D`), Verde Olivo (`#87A968`), Crema (`#F5E5D3`), Dorado (`#D4A437`) y Nogal (`#2C2623`).
+Transformación completa de la plataforma **Mueblería Hermanos Jota** a una arquitectura **Full Stack Decoupled (Cliente-Servidor)**:
+1. **`backend/`**: Servidor API REST desarrollado en Node.js y Express que expone el catálogo de muebles y maneja middlewares de registro y errores.
+2. **`client/`**: Aplicación de Single Page Application (SPA) construida en React con Vite, modularizada en componentes con `useState`, `useEffect` y consumo de API con `fetch()`.
 
 ---
 
-##  Estructura de Archivos del Proyecto
+## 🚀 Arquitectura y Tecnologías Utilizadas
 
 ```
-E-commerce-Muebleria-Hermanos-Jota-Grupo-1-main/
-├── index.html            # Página de Inicio / Hero / Destacados
-├── productos.html        # Catálogo interactivo con filtros y búsqueda
-├── producto.html         # Ficha técnica detallada de producto
-├── contacto.html         # Formulario de contacto y validación DOM
-├── README.md             # Documentación académica del entregable
-├── css/
-│   └── styles.css        # Sistema de diseño responsivo y componentes
-├── js/
-│   ├── productos.js      # Array de objetos con el catálogo completo (11 productos)
-│   ├── carrito.js        # CarritoService, Drawer Modal, Toast y localStorage
-│   ├── main.js           # Lógica de Inicio y carga asíncrona (setTimeout)
-│   ├── catalogo.js       # Filtros por categoría y buscador dinámico
-│   ├── detalle.js        # Parseo de URL y renderizado de especificaciones
-│   └── contacto.js       # Validación client-side del formulario
-└── img/                  # Identidad visual (logo-hj.png) y fotografías de piezas
+E-commerce-Muebleria-Hermanos-Jota-Grupo-1/
+├── backend/                    # Servidor API REST (Node.js + Express)
+│   ├── data/
+│   │   └── productos.json      # Catálogo de datos en formato JSON
+│   ├── middlewares/
+│   │   ├── logger.js           # Middleware de registro de peticiones
+│   │   └── errorHandler.js     # Manejador de rutas 404 y errores 500
+│   ├── routes/
+│   │   └── productos.routes.js # express.Router (/api/productos y /api/productos/:id)
+│   ├── package.json
+│   └── server.js               # Servidor principal (Puerto 5000)
+│
+├── client/                     # Frontend SPA en React (Vite)
+│   ├── public/
+│   │   └── img/                # Isotipo oficial hj y fotos del catálogo
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx      # Header con isotipo hj y badge del carrito
+│   │   │   ├── Footer.jsx      # Pie de página informativo
+│   │   │   ├── ProductCard.jsx # Tarjetas de productos
+│   │   │   ├── ProductList.jsx # Grilla con fetch, filtros y buscador
+│   │   │   ├── ProductDetail.jsx# Ficha técnica detallada
+│   │   │   ├── ContactForm.jsx # Formulario controlado con useState
+│   │   │   └── CartDrawer.jsx  # Modal desplegable del carrito
+│   │   ├── App.jsx             # Estado global del carrito y navegación
+│   │   ├── main.jsx            # Punto de entrada de React
+│   │   └── styles.css          # Sistema de diseño e identidad visual
+│   ├── package.json
+│   └── vite.config.js
+│
+└── README.md
 ```
 
 ---
 
-## Fuente de Datos del Catálogo
+## 💻 Instrucciones de Instalación y Ejecución
 
-El archivo `js/productos.js` cuenta con **11 productos**, superando el mínimo de 8 exigido por la consigna. 
-- Los 6 productos principales cuentan con ficha técnica detallada proveniente de los textos del catálogo: *Mesa de Noche Aconcagua*, *Sofá Patagonia*, *Mesa Comedor Pampa*, *Sillas Córdoba*, *Escritorio Costa* y *Silla de Trabajo Belgrano*.
-- Los 5 productos adicionales provienen del kit fotográfico (*Aparador Uspallata*, *Biblioteca Recoleta*, *Butaca Mendoza*, *Mesa de Centro Araucaria* y *Sillón Copacabana*).
+### 1. Iniciar el Backend (API REST en Node.js)
+```bash
+cd backend
+npm install
+npm run dev   # O `npm start`
+```
+El servidor backend quedará escuchando en `http://localhost:5000`.
+
+### 2. Iniciar el Frontend (React en Vite)
+En una segunda terminal:
+```bash
+cd client
+npm install
+npm run dev
+```
+La aplicación React se abrirá en `http://localhost:5173`.
 
 ---
 
-##  Ejecución Local
+## 🧪 Endpoints del Backend
 
-No requiere la instalación de Node.js ni servidor backend. Para ejecutar el proyecto:
-1. Clonar o descargar el repositorio.
-2. Abrir `index.html` directamente en cualquier navegador web moderno (Chrome, Edge, Firefox, Safari).
-3. O bien, utilizar la extensión **Live Server** de VS Code.
+- `GET http://localhost:5000/api/productos`: Retorna la lista completa de muebles.
+- `GET http://localhost:5000/api/productos/:id`: Retorna la ficha técnica de un mueble específico (o 404 con respuesta JSON controlada).
+
+---
+
+## ✨ Requerimientos de Consigna Cumplidos (Sprint 3 y 4)
+
+- ✅ **Servidor Express y Router**: Rutas modulares organizadas con `express.Router` y middleware de logging.
+- ✅ **Componentización en React**: `Navbar`, `Footer`, `ProductCard`, `ProductList`, `ProductDetail`, `ContactForm` y `CartDrawer`.
+- ✅ **Ciclo de vida y Fetch**: Manejo de peticiones asíncronas con `useState` y `useEffect` (estados `loading`, `error`, `data`).
+- ✅ **Formulario Controlado**: Manejo del estado del formulario de contacto con `useState` y mensajes dinámicos.
+- ✅ **Persistencia de Carrito**: Carrito interactivo con `localStorage`, badge contador en `Navbar` y actualización de cantidades.
