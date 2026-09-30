@@ -5,7 +5,6 @@
 
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
 
 const logger = require('./middlewares/logger');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
@@ -15,9 +14,9 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares globales
-app.use(cors());
-app.use(express.json());
-app.use(logger);
+app.use(logger);          // 1° logging: registra método y URL de TODA petición
+app.use(cors());          // permite que el frontend React (otro puerto) consuma la API
+app.use(express.json());  // parsea body JSON (para futuras peticiones POST)
 
 // Ruta base de bienvenida
 app.get('/', (req, res) => {

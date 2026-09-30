@@ -11,13 +11,26 @@ const notFoundHandler = (req, res, next) => {
     });
 };
 
-// Manejador de errores globales 500
+// Manejador de errores centralizado (debe registrarse al final, con 4 parámetros)
 const errorHandler = (err, req, res, next) => {
-    console.error('🔥 Error interno del servidor:', err);
-    res.status(err.status || 500).json({
+    const status = err.status || err.statusCode || 500;
+
+    // Solo se imprime el stack completo para errores del servidor (5xx)
+    if (status >= 500) {
+        console.error('🔥 Error interno del servidor:', err);
+    }
+
+    // Body JSON mal formado en una petición (error de express.json())
+    const mensaje = err.type === 'entity.parse.failed'
+        ? 'El cuerpo de la petición no es un JSON válido.'
+        : status >= 500
+            ? 'Error interno del servidor. Por favor intente más tarde.'
+            : err.message;
+
+    res.status(status).json({
         error: true,
-        codigo: err.status || 500,
-        mensaje: err.message || 'Error interno del servidor. Por favor intente más tarde.'
+        codigo: status,
+        mensaje
     });
 };
 
