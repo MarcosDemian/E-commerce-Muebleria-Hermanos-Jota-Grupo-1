@@ -2,9 +2,7 @@
 
 Aplicación de comercio electrónico con arquitectura cliente-servidor: una **API REST** en Node.js + Express que sirve el catálogo de muebles, y una **SPA en React (Vite)** que la consume.
 
-**Curso:** Full Stack Developer — ITBA Educación Ejecutiva 
-**Comisión:** Aula General 
-**Entrega:** Fin del Sprint 4
+**Curso:** Full Stack Developer — ITBA Educación Ejecutiva · **Comisión:** Aula General · **Entrega:** Fin del Sprint 4
 
 ## 👥 Integrantes (Grupo 1)
 
@@ -39,42 +37,49 @@ npm install
 npm run dev
 ```
 
+> El backend debe estar corriendo antes de abrir el frontend.
+> En Windows, si `npm install` falla por la política de scripts de PowerShell, usá `npm.cmd install`.
+
 ## 🧪 Tests
 
-**API (Jest + Supertest)**
+**API (Jest + Supertest)**: no necesita el servidor corriendo.
 
+```bash
 cd backend
 npm test
+```
 
-**Frontend (Playwright, extremo a extremo)**
+**Frontend (Playwright, extremo a extremo)**: levanta el backend y el frontend automáticamente.
 
+```bash
 cd client
 npx playwright install chromium   # solo la primera vez
 npm run test:e2e
+```
 
-Playwright levanta el backend y el frontend automáticamente.
-
-> El backend debe estar corriendo antes de abrir el frontend.
-> En Windows, si `npm install` falla por la política de scripts de PowerShell, usá `npm.cmd install`.
+Con `npm run test:e2e:ui` se abre una ventana para ver los tests paso a paso.
 
 ## 🏗️ Arquitectura
 
 ```
-├── backend/                     # API REST (Node.js + Express)
-│   ├── data/productos.js        # Catálogo: array de 11 productos
+├── backend/                         # API REST (Node.js + Express)
+│   ├── data/productos.js            # Catálogo: array de 11 productos
 │   ├── middlewares/
-│   │   ├── logger.js            # Registra método y URL de cada petición
-│   │   └── errorHandler.js      # Manejo de 404 y errores 500
+│   │   ├── logger.js                # Registra método y URL de cada petición
+│   │   └── errorHandler.js          # Manejo de 404 y errores 500
 │   ├── routes/productos.routes.js   # express.Router
-│   └── server.js                # Punto de entrada
+│   ├── test/productos.test.js       # Tests de la API (Jest + Supertest)
+│   └── server.js                    # Punto de entrada
 │
-├── client/                      # SPA en React (Vite)
+├── client/                          # SPA en React (Vite)
+│   ├── e2e/                         # Tests extremo a extremo (Playwright)
+│   ├── playwright.config.js
 │   └── src/
-│       ├── components/          # Navbar, Footer, ProductCard, ProductList,
-│       │                        # ProductDetail, ContactForm, CartDrawer
-│       └── App.jsx              # Estado del carrito y vista activa
+│       ├── components/              # Navbar, Footer, ProductCard, ProductList,
+│       │                            # ProductDetail, ContactForm, CartDrawer
+│       └── App.jsx                  # Estado del carrito y vista activa
 │
-└── index.html, css/, js/ ...    # Versión estática de los Sprints 1 y 2
+└── index.html, css/, js/ ...        # Versión estática de los Sprints 1 y 2
 ```
 
 ```
@@ -101,3 +106,4 @@ Los errores siempre responden en JSON: `{ "error": true, "codigo": 404, "mensaje
 - **CORS habilitado**, porque React y la API corren en puertos distintos.
 - **Navegación por estado en `App`** (sin React Router): alcanza para el tamaño del proyecto.
 - **Carrito en el estado de `App`**, pasado por props a `Navbar` y `CartDrawer`, y persistido en `localStorage` para no perderlo al recargar.
+- **Tests en dos niveles**: Jest + Supertest para la API (rápidos, sin servidor) y Playwright para los flujos de usuario (catálogo, carrito, contacto, errores de la API).

@@ -1,9 +1,8 @@
 {
-  "name": "muebleria-hermanos-jota-backend",
+  "name": "muebleria-hermanos-jota-client",
+  "private": true,
   "version": "1.0.0",
-  "description": "API REST de productos para Mueblería Hermanos Jota - ITBA Sprint 3 y 4",
-  "main": "server.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
