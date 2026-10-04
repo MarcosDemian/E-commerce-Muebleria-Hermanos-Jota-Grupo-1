@@ -37,10 +37,15 @@ app.use('/api/productos', productosRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Iniciar servidor
-app.listen(PORT, () => {
-    console.log(`===========================================================`);
-    console.log(` Servidor Hermanos Jota funcionando en http://localhost:${PORT}`);
-    console.log(` Endpoint Productos: http://localhost:${PORT}/api/productos`);
-    console.log(`===========================================================`);
-});
+// Iniciar servidor solo si se ejecuta directamente (`node server.js`).
+// Si otro archivo lo importa (por ejemplo, los tests), no abre el puerto.
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`===========================================================`);
+        console.log(` Servidor Hermanos Jota funcionando en http://localhost:${PORT}`);
+        console.log(` Endpoint Productos: http://localhost:${PORT}/api/productos`);
+        console.log(`===========================================================`);
+    });
+}
+
+module.exports = app;
