@@ -59,6 +59,9 @@ npm run test:e2e
 
 Con `npm run test:e2e:ui` se abre una ventana para ver los tests paso a paso.
 
+**. Deploy**
+https://e-commerce-muebleria-hermanos-jota-five.vercel.app/
+
 ## 🏗️ Arquitectura
 
 ```
