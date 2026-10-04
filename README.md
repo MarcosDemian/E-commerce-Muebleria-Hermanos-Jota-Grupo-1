@@ -1,92 +1,103 @@
-# Mueblería Hermanos Jota — E-commerce Full Stack (Sprint 3 y 4)
+# 🪑 Mueblería Hermanos Jota — E-commerce Full Stack
 
-**Curso**: Full Stack Developer — ITBA Educación Ejecutiva  
-**Comisión**: Aula General  
-**Equipo — Grupo 1**:
-- **Cristian Joel Soto**
-- **Marcos Demian Garcia**
-- **Joaquin Esteban Monzón Fernández**
+Aplicación de comercio electrónico con arquitectura cliente-servidor: una **API REST** en Node.js + Express que sirve el catálogo de muebles, y una **SPA en React (Vite)** que la consume.
 
----
+**Curso:** Full Stack Developer — ITBA Educación Ejecutiva 
+**Comisión:** Aula General 
+**Entrega:** Fin del Sprint 4
 
-## 📌 Resumen del Proyecto
+## 👥 Integrantes (Grupo 1)
 
-Transformación completa de la plataforma **Mueblería Hermanos Jota** a una arquitectura **Full Stack Decoupled (Cliente-Servidor)**:
-1. **`backend/`**: Servidor API REST desarrollado en Node.js y Express que expone el catálogo de muebles y maneja middlewares de registro y errores.
-2. **`client/`**: Aplicación de Single Page Application (SPA) construida en React con Vite, modularizada en componentes con `useState`, `useEffect` y consumo de API con `fetch()`.
+- Cristian Joel Soto
+- Marcos Demian Garcia
+- Catalina Schamberger
 
 ---
 
-## 🚀 Arquitectura y Tecnologías Utilizadas
+## 💻 Instalación y ejecución
 
-```
-E-commerce-Muebleria-Hermanos-Jota-Grupo-1/
-├── backend/                    # Servidor API REST (Node.js + Express)
-│   ├── data/
-│   │   └── productos.json      # Catálogo de datos en formato JSON
-│   ├── middlewares/
-│   │   ├── logger.js           # Middleware de registro de peticiones
-│   │   └── errorHandler.js     # Manejador de rutas 404 y errores 500
-│   ├── routes/
-│   │   └── productos.routes.js # express.Router (/api/productos y /api/productos/:id)
-│   ├── package.json
-│   └── server.js               # Servidor principal (Puerto 5000)
-│
-├── client/                     # Frontend SPA en React (Vite)
-│   ├── public/
-│   │   └── img/                # Isotipo oficial hj y fotos del catálogo
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx      # Header con isotipo hj y badge del carrito
-│   │   │   ├── Footer.jsx      # Pie de página informativo
-│   │   │   ├── ProductCard.jsx # Tarjetas de productos
-│   │   │   ├── ProductList.jsx # Grilla con fetch, filtros y buscador
-│   │   │   ├── ProductDetail.jsx# Ficha técnica detallada
-│   │   │   ├── ContactForm.jsx # Formulario controlado con useState
-│   │   │   └── CartDrawer.jsx  # Modal desplegable del carrito
-│   │   ├── App.jsx             # Estado global del carrito y navegación
-│   │   ├── main.jsx            # Punto de entrada de React
-│   │   └── styles.css          # Sistema de diseño e identidad visual
-│   ├── package.json
-│   └── vite.config.js
-│
-└── README.md
+Requisitos: [Node.js](https://nodejs.org/) (LTS) y Git.
+
+```bash
+git clone https://github.com/MarcosDemian/E-commerce-Muebleria-Hermanos-Jota-Grupo-1.git
+cd E-commerce-Muebleria-Hermanos-Jota-Grupo-1
 ```
 
----
+**1. Backend** (http://localhost:5000)
 
-## 💻 Instrucciones de Instalación y Ejecución
-
-### 1. Iniciar el Backend (API REST en Node.js)
 ```bash
 cd backend
 npm install
-npm run dev   # O `npm start`
+npm run dev      # o `npm start`
 ```
-El servidor backend quedará escuchando en `http://localhost:5000`.
 
-### 2. Iniciar el Frontend (React en Vite)
-En una segunda terminal:
+**2. Frontend** (http://localhost:5173), en una segunda terminal
+
 ```bash
 cd client
 npm install
 npm run dev
 ```
-La aplicación React se abrirá en `http://localhost:5173`.
 
----
+## 🧪 Tests
 
-## 🧪 Endpoints del Backend
+**API (Jest + Supertest)**
 
-- `GET http://localhost:5000/api/productos`: Retorna la lista completa de muebles.
-- `GET http://localhost:5000/api/productos/:id`: Retorna la ficha técnica de un mueble específico (o 404 con respuesta JSON controlada).
+cd backend
+npm test
 
----
+**Frontend (Playwright, extremo a extremo)**
 
-## ✨ Requerimientos de Consigna Cumplidos (Sprint 3 y 4)
+cd client
+npx playwright install chromium   # solo la primera vez
+npm run test:e2e
 
-- ✅ **Servidor Express y Router**: Rutas modulares organizadas con `express.Router` y middleware de logging.
-- ✅ **Componentización en React**: `Navbar`, `Footer`, `ProductCard`, `ProductList`, `ProductDetail`, `ContactForm` y `CartDrawer`.
-- ✅ **Ciclo de vida y Fetch**: Manejo de peticiones asíncronas con `useState` y `useEffect` (estados `loading`, `error`, `data`).
-- ✅ **Formulario Controlado**: Manejo del estado del formulario de contacto con `useState` y mensajes dinámicos.
-- ✅ **Persistencia de Carrito**: Carrito interactivo con `localStorage`, badge contador en `Navbar` y actualización de cantidades.
+Playwright levanta el backend y el frontend automáticamente.
+
+> El backend debe estar corriendo antes de abrir el frontend.
+> En Windows, si `npm install` falla por la política de scripts de PowerShell, usá `npm.cmd install`.
+
+## 🏗️ Arquitectura
+
+```
+├── backend/                     # API REST (Node.js + Express)
+│   ├── data/productos.js        # Catálogo: array de 11 productos
+│   ├── middlewares/
+│   │   ├── logger.js            # Registra método y URL de cada petición
+│   │   └── errorHandler.js      # Manejo de 404 y errores 500
+│   ├── routes/productos.routes.js   # express.Router
+│   └── server.js                # Punto de entrada
+│
+├── client/                      # SPA en React (Vite)
+│   └── src/
+│       ├── components/          # Navbar, Footer, ProductCard, ProductList,
+│       │                        # ProductDetail, ContactForm, CartDrawer
+│       └── App.jsx              # Estado del carrito y vista activa
+│
+└── index.html, css/, js/ ...    # Versión estática de los Sprints 1 y 2
+```
+
+```
+React (:5173)  ──fetch──▶  API Express (:5000)  ──lee──▶  data/productos.js
+```
+
+**Endpoints**
+
+| Método | Ruta | Respuesta |
+|---|---|---|
+| `GET` | `/api/productos` | `200` con la lista completa |
+| `GET` | `/api/productos/:id` | `200` con el producto · `404` si no existe · `400` si el id no es numérico |
+
+Los errores siempre responden en JSON: `{ "error": true, "codigo": 404, "mensaje": "..." }`.
+
+## 🧭 Decisiones tomadas
+
+- **Frontend y backend desacoplados**, cada uno con su `package.json`, para ejecutarlos y desplegarlos por separado.
+- **Vite en lugar de `create-react-app`**: arranque más rápido y CRA está discontinuado.
+- **Datos en un archivo `.js`** (sin base de datos, como pide la consigna). La API hace de capa de acceso, así que migrar a una base de datos solo cambiaría el backend.
+- **Rutas con `express.Router`** en su propio módulo, para sumar recursos sin tocar `server.js`.
+- **Logger primero y manejadores de error al final**, para registrar toda petición, incluso las que fallan.
+- **Errores en JSON con formato uniforme**, para que el frontend los maneje igual siempre.
+- **CORS habilitado**, porque React y la API corren en puertos distintos.
+- **Navegación por estado en `App`** (sin React Router): alcanza para el tamaño del proyecto.
+- **Carrito en el estado de `App`**, pasado por props a `Navbar` y `CartDrawer`, y persistido en `localStorage` para no perderlo al recargar.

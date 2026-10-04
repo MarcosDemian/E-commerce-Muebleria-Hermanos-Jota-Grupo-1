@@ -1,18 +1,22 @@
 {
-  "name": "muebleria-hermanos-jota-client",
-  "private": true,
+  "name": "muebleria-hermanos-jota-backend",
   "version": "1.0.0",
-  "type": "module",
+  "description": "API REST de productos para Mueblería Hermanos Jota - ITBA Sprint 3 y 4",
+  "main": "server.js",
+  "type": "commonjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@vitejs/plugin-react": "^4.3.1",
     "vite": "^5.3.1"
   }

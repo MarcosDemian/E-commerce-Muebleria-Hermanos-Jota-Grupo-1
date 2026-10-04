@@ -155,7 +155,7 @@ class CarritoService {
 
         document.getElementById('emptyCartBtn').addEventListener('click', () => {
             if (this.items.length === 0) return;
-            if (confirm('¿Vaciar todos los productos del carrito?')) {
+            if (confirm('¿Esta seguro que quiere vaciar todos los productos del carrito?')) {
                 this.vaciar();
             }
         });

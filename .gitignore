@@ -32,3 +32,8 @@ build/
 *.sln
 *.sw?
 .DS_Store
+
+# Playwright (tests E2E)
+client/test-results/
+client/playwright-report/
+client/playwright/.cache/
