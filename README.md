@@ -71,15 +71,13 @@ Con `npm run test:e2e:ui` se abre una ventana para ver los tests paso a paso.
 │   ├── test/productos.test.js       # Tests de la API (Jest + Supertest)
 │   └── server.js                    # Punto de entrada
 │
-├── client/                          # SPA en React (Vite)
-│   ├── e2e/                         # Tests extremo a extremo (Playwright)
-│   ├── playwright.config.js
-│   └── src/
-│       ├── components/              # Navbar, Footer, ProductCard, ProductList,
-│       │                            # ProductDetail, ContactForm, CartDrawer
-│       └── App.jsx                  # Estado del carrito y vista activa
-│
-└── index.html, css/, js/ ...        # Versión estática de los Sprints 1 y 2
+└── client/                          # SPA en React (Vite)
+   ├── e2e/                         # Tests extremo a extremo (Playwright)
+   ├── playwright.config.js
+   └── src/
+       ├── components/              # Navbar, Footer, ProductCard, ProductList,
+       │                            # ProductDetail, ContactForm, CartDrawer
+       └── App.jsx                  # Estado del carrito y vista activa
 ```
 
 ```

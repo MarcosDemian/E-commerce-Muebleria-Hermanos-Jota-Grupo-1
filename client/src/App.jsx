@@ -6,6 +6,7 @@ import ProductCard from './components/ProductCard';
 import ProductDetail from './components/ProductDetail';
 import ContactForm from './components/ContactForm';
 import CartDrawer from './components/CartDrawer';
+import { API_PRODUCTOS } from './config';
 
 const CART_STORAGE_KEY = 'hj_cart_items_v2';
 
@@ -26,6 +27,7 @@ export default function App() {
   const [toastMsg, setToastMsg] = useState('');
   const [destacados, setDestacados] = useState([]);
   const [loadingDestacados, setLoadingDestacados] = useState(true);
+  const [errorDestacados, setErrorDestacados] = useState(null);
 
   // Persistir carrito en localStorage
   useEffect(() => {
@@ -34,14 +36,20 @@ export default function App() {
 
   // Cargar destacados para la Home desde la API REST
   useEffect(() => {
-    fetch('http://localhost:5000/api/productos')
-      .then(res => res.json())
+    fetch(API_PRODUCTOS)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`Error en el servidor: HTTP ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
         setDestacados(data.slice(0, 4));
         setLoadingDestacados(false);
       })
       .catch(err => {
         console.error('Error cargando destacados en Home:', err);
+        setErrorDestacados('No pudimos cargar las piezas destacadas. Verificá que el backend esté corriendo.');
         setLoadingDestacados(false);
       });
   }, []);
@@ -162,6 +170,11 @@ export default function App() {
                   {loadingDestacados ? (
                     <div className="loading-state">
                       <p>⏳ Cargando nuestra selección...</p>
+                    </div>
+                  ) : errorDestacados ? (
+                    <div className="error-state">
+                      <h3>⚠️ No pudimos cargar la selección</h3>
+                      <p>{errorDestacados}</p>
                     </div>
                   ) : (
                     destacados.map(p => (

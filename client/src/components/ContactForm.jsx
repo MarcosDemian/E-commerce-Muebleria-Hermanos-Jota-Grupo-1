@@ -64,7 +64,7 @@ export default function ContactForm() {
   };
 
   return (
-    <main>
+    <>
       <section className="page-intro">
         <div className="container">
           <p className="eyebrow">HABLEMOS</p>
@@ -168,6 +168,6 @@ export default function ContactForm() {
           </div>
         </div>
       </section>
-    </main>
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_PRODUCTOS } from '../config';
 
 export default function ProductDetail({ productId, onBack, onAddToCart }) {
   const [producto, setProducto] = useState(null);
@@ -10,7 +11,7 @@ export default function ProductDetail({ productId, onBack, onAddToCart }) {
     if (!productId) return;
     setLoading(true);
     setError(null);
-    fetch(`http://localhost:5000/api/productos/${productId}`)
+    fetch(`${API_PRODUCTOS}/${productId}`)
       .then(res => {
         if (!res.ok) {
           throw new Error(`Producto no encontrado (HTTP ${res.status})`);

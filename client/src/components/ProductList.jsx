@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
+import { API_URL, API_PRODUCTOS } from '../config';
 
 export default function ProductList({ onSelectProduct }) {
   const [productos, setProductos] = useState([]);
@@ -11,7 +12,7 @@ export default function ProductList({ onSelectProduct }) {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch('http://localhost:5000/api/productos')
+    fetch(API_PRODUCTOS)
       .then(res => {
         if (!res.ok) {
           throw new Error(`Error en el servidor: HTTP ${res.status}`);
@@ -24,7 +25,7 @@ export default function ProductList({ onSelectProduct }) {
       })
       .catch(err => {
         console.error('Error fetching productos:', err);
-        setError('No pudimos conectar con el servidor de Hermanos Jota (http://localhost:5000). Asegurate de que el backend esté corriendo.');
+        setError(`No pudimos conectar con el servidor de Hermanos Jota (${API_URL}). Asegurate de que el backend esté corriendo.`);
         setLoading(false);
       });
   }, []);
