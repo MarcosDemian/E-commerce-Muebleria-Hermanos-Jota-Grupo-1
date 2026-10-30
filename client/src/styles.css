@@ -886,3 +886,11 @@ h3 {
     grid-template-columns: 0.9fr 1.1fr;
   }
 }
+
+
+/* React Router NavLink active & hover styles */
+.main-nav a:hover,
+.main-nav a.active {
+  color: var(--siena);
+  border-color: var(--siena);
+}

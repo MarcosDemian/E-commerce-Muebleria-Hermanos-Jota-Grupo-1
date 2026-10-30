@@ -71,7 +71,11 @@ export default function CartDrawer({
               </div>
             ) : (
               items.map(item => {
-                const imageSrc = item.imagen.startsWith('/') ? item.imagen : `/${item.imagen}`;
+                const rawImg = item.imagen || 'img/aparador-uspallata.png';
+                const imageSrc =
+                  rawImg.startsWith('http://') || rawImg.startsWith('https://') || rawImg.startsWith('/')
+                    ? rawImg
+                    : `/${rawImg}`;
                 return (
                   <div className="cart-item-card" key={item.id}>
                     <img src={imageSrc} alt={item.nombre} className="cart-item-img" />

@@ -1,37 +1,45 @@
 import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
 
-export default function Navbar({ activeTab, setActiveTab, cartCount, onOpenCart }) {
+export default function Navbar({ cartCount, onOpenCart }) {
   return (
     <header className="site-header">
       <div className="container header-inner">
-        <div 
+        <Link 
+          to="/" 
           className="brand" 
-          onClick={() => setActiveTab('home')} 
           aria-label="Hermanos Jota - Inicio"
         >
           <img src="/img/logo-hj.png" alt="Hermanos Jota" className="brand-logo-img" />
           <span>HERMANOS JOTA</span>
-        </div>
+        </Link>
 
         <nav className="main-nav" aria-label="Navegación principal">
-          <button 
-            className={activeTab === 'home' ? 'active' : ''} 
-            onClick={() => setActiveTab('home')}
+          <NavLink 
+            to="/" 
+            end
+            className={({ isActive }) => isActive ? 'active' : ''}
           >
             Inicio
-          </button>
-          <button 
-            className={activeTab === 'productos' ? 'active' : ''} 
-            onClick={() => setActiveTab('productos')}
+          </NavLink>
+          <NavLink 
+            to="/productos" 
+            className={({ isActive }) => isActive ? 'active' : ''}
           >
             Productos
-          </button>
-          <button 
-            className={activeTab === 'contacto' ? 'active' : ''} 
-            onClick={() => setActiveTab('contacto')}
+          </NavLink>
+          <NavLink 
+            to="/contacto" 
+            className={({ isActive }) => isActive ? 'active' : ''}
           >
             Contacto
-          </button>
+          </NavLink>
+          <NavLink 
+            to="/admin/crear-producto" 
+            className={({ isActive }) => isActive ? 'active' : ''}
+          >
+            + Crear Producto
+          </NavLink>
         </nav>
 
         <button 

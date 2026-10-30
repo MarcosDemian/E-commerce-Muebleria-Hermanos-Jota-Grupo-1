@@ -1,6 +1,10 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-export default function ProductCard({ producto, onSelectProduct }) {
+export default function ProductCard({ producto }) {
+  const navigate = useNavigate();
+  const productId = producto._id || producto.id;
+
   const formatearPrecio = (precio) => {
     return precio == null
       ? 'Precio a consultar'
@@ -11,28 +15,32 @@ export default function ProductCard({ producto, onSelectProduct }) {
         }).format(precio);
   };
 
-  const imageSrc = producto.imagen.startsWith('/') ? producto.imagen : `/${producto.imagen}`;
+  const rawImg = producto.imagenUrl || producto.imagen || 'img/aparador-uspallata.png';
+  const imageSrc =
+    rawImg.startsWith('http://') || rawImg.startsWith('https://') || rawImg.startsWith('/')
+      ? rawImg
+      : `/${rawImg}`;
 
   return (
     <article className="product-card">
-      <div 
+      <Link 
+        to={`/productos/${productId}`}
         className="product-image-link" 
-        onClick={() => onSelectProduct(producto.id)}
       >
         <img src={imageSrc} alt={producto.nombre} loading="lazy" />
-      </div>
+      </Link>
       <div className="product-card-body">
-        <p className="product-category">{producto.categoria}</p>
+        <p className="product-category">{producto.categoria || 'Catálogo'}</p>
         <h2>
-          <a onClick={() => onSelectProduct(producto.id)}>
+          <Link to={`/productos/${productId}`}>
             {producto.nombre}
-          </a>
+          </Link>
         </h2>
         <div className="product-card-footer">
           <strong>{formatearPrecio(producto.precio)}</strong>
           <button 
             className="button button-secondary" 
-            onClick={() => onSelectProduct(producto.id)}
+            onClick={() => navigate(`/productos/${productId}`)}
           >
             VER DETALLE
           </button>
