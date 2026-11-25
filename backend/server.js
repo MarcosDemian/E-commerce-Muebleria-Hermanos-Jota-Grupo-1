@@ -1,6 +1,6 @@
 /* ==========================================================================
    SERVIDOR PRINCIPAL BACKEND — MUEBLERÍA HERMANOS JOTA
-   Consigna Final Sprint 5 y 6 (Persistencia MongoDB + CRUD Completo)
+   Consigna Final Sprint 5, 6, 7 y 8 (MongoDB + CRUD + Auth JWT + Pedidos)
    ========================================================================== */
 
 require('dotenv').config();
@@ -11,6 +11,8 @@ const mongoose = require('mongoose');
 const logger = require('./middlewares/logger');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 const productosRoutes = require('./routes/productos.routes');
+const authRoutes = require('./routes/auth.routes');
+const pedidosRoutes = require('./routes/pedidos.routes');
 const Product = require('./models/Product');
 const productosIniciales = require('./data/productos');
 
@@ -26,17 +28,26 @@ app.use(express.json());  // parsea body JSON (para peticiones POST / PUT)
 // Ruta base de bienvenida
 app.get('/', (req, res) => {
     res.json({
-        mensaje: '🛍️ API REST Mueblería Hermanos Jota activa (MongoDB + Mongoose)',
-        version: '2.0.0',
+        mensaje: '🛍️ API REST Mueblería Hermanos Jota activa (MongoDB + Auth JWT + Pedidos)',
+        version: '3.0.0',
         endpoints: {
             productos: '/api/productos',
-            productoPorId: '/api/productos/:id'
+            productoPorId: '/api/productos/:id',
+            registro: '/api/auth/registro',
+            login: '/api/auth/login',
+            perfil: '/api/auth/perfil',
+            pedidos: '/api/pedidos',
+            misPedidos: '/api/pedidos/mis-pedidos'
         }
     });
 });
 
 // Rutas de API
 app.use('/api/productos', productosRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/usuarios', authRoutes); // Alias de compatibilidad
+app.use('/api/pedidos', pedidosRoutes);
+app.use('/api/orders', pedidosRoutes); // Alias de compatibilidad
 
 // Manejo de errores 404 y 500
 app.use(notFoundHandler);
@@ -47,6 +58,10 @@ async function connectDB() {
     if (!MONGODB_URI) {
         console.error('❌ Error: MONGODB_URI no está definida en las variables de entorno (.env).');
         process.exit(1);
+    }
+
+    if (mongoose.connection.readyState === 1) {
+        return;
     }
 
     await mongoose.connect(MONGODB_URI);
@@ -78,6 +93,8 @@ if (require.main === module) {
                 console.log(`===========================================================`);
                 console.log(` Servidor Hermanos Jota funcionando en http://localhost:${PORT}`);
                 console.log(` Endpoint Productos: http://localhost:${PORT}/api/productos`);
+                console.log(` Endpoint Auth:      http://localhost:${PORT}/api/auth`);
+                console.log(` Endpoint Pedidos:   http://localhost:${PORT}/api/pedidos`);
                 console.log(`===========================================================`);
             });
         })
