@@ -2,3 +2,6 @@
 // Se puede cambiar con la variable VITE_API_URL (ver client/.env.example).
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 export const API_PRODUCTOS = `${API_URL}/api/productos`;
+export const API_AUTH = `${API_URL}/api/auth`;
+export const API_PEDIDOS = `${API_URL}/api/pedidos`;
+

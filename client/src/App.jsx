@@ -8,6 +8,12 @@ import ProductDetail from './components/ProductDetail';
 import ProductForm from './components/ProductForm';
 import ContactForm from './components/ContactForm';
 import CartDrawer from './components/CartDrawer';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Profile from './pages/Profile';
+import MyOrders from './pages/MyOrders';
 import { API_PRODUCTOS } from './config';
 
 const CART_STORAGE_KEY = 'hj_cart_items_v2';
@@ -233,52 +239,77 @@ export default function App() {
   const totalItemsCount = cart.reduce((acc, item) => acc + item.cantidad, 0);
 
   return (
-    <div className="app-layout">
-      <Navbar 
-        cartCount={totalItemsCount} 
-        onOpenCart={() => setIsCartOpen(true)} 
-      />
+    <AuthProvider>
+      <div className="app-layout">
+        <Navbar 
+          cartCount={totalItemsCount} 
+          onOpenCart={() => setIsCartOpen(true)}
+          onShowToast={showToast}
+        />
 
-      <main>
-        <Routes>
-          <Route path="/" element={<HomeView />} />
-          <Route path="/productos" element={<ProductList />} />
-          <Route 
-            path="/productos/:id" 
-            element={
-              <ProductDetail 
-                onAddToCart={handleAddToCart}
-                onShowToast={showToast}
-              />
-            } 
-          />
-          <Route path="/contacto" element={<ContactForm />} />
-          <Route 
-            path="/admin/crear-producto" 
-            element={<ProductForm mode="create" onShowToast={showToast} />} 
-          />
-          <Route 
-            path="/admin/editar-producto/:id" 
-            element={<ProductForm mode="edit" onShowToast={showToast} />} 
-          />
-        </Routes>
-      </main>
+        <main>
+          <Routes>
+            <Route path="/" element={<HomeView />} />
+            <Route path="/productos" element={<ProductList />} />
+            <Route 
+              path="/productos/:id" 
+              element={
+                <ProductDetail 
+                  onAddToCart={handleAddToCart}
+                  onShowToast={showToast}
+                />
+              } 
+            />
+            <Route path="/contacto" element={<ContactForm />} />
+            <Route 
+              path="/admin/crear-producto" 
+              element={<ProductForm mode="create" onShowToast={showToast} />} 
+            />
+            <Route 
+              path="/admin/editar-producto/:id" 
+              element={<ProductForm mode="edit" onShowToast={showToast} />} 
+            />
 
-      <Footer />
+            {/* Rutas Públicas de Autenticación */}
+            <Route path="/login" element={<Login onShowToast={showToast} />} />
+            <Route path="/registro" element={<Register onShowToast={showToast} />} />
 
-      <CartDrawer 
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cart}
-        onUpdateQty={handleUpdateQty}
-        onRemoveItem={handleRemoveItem}
-        onClearCart={handleClearCart}
-        onGoToCatalog={() => navigate('/productos')}
-      />
+            {/* Rutas Protegidas (requieren JWT activo) */}
+            <Route 
+              path="/perfil" 
+              element={
+                <ProtectedRoute>
+                  <Profile onShowToast={showToast} />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/mis-pedidos" 
+              element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </main>
 
-      <div className={`toast-notification ${toastMsg ? 'show' : ''}`}>
-        {toastMsg}
+        <Footer />
+
+        <CartDrawer 
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          items={cart}
+          onUpdateQty={handleUpdateQty}
+          onRemoveItem={handleRemoveItem}
+          onClearCart={handleClearCart}
+          onGoToCatalog={() => navigate('/productos')}
+        />
+
+        <div className={`toast-notification ${toastMsg ? 'show' : ''}`}>
+          {toastMsg}
+        </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 }

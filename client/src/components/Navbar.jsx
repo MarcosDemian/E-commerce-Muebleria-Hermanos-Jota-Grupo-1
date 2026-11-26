@@ -1,7 +1,19 @@
 import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-export default function Navbar({ cartCount, onOpenCart }) {
+export default function Navbar({ cartCount, onOpenCart, onShowToast }) {
+  const { isAuthenticated, logout, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    if (onShowToast) {
+      onShowToast('Sesión cerrada correctamente');
+    }
+    navigate('/');
+  };
+
   return (
     <header className="site-header">
       <div className="container header-inner">
@@ -40,6 +52,46 @@ export default function Navbar({ cartCount, onOpenCart }) {
           >
             + Crear Producto
           </NavLink>
+
+          {!loading && (
+            !isAuthenticated ? (
+              <>
+                <NavLink 
+                  to="/login" 
+                  className={({ isActive }) => isActive ? 'active' : ''}
+                >
+                  Ingresar
+                </NavLink>
+                <NavLink 
+                  to="/registro" 
+                  className={({ isActive }) => isActive ? 'active' : ''}
+                >
+                  Crear Cuenta
+                </NavLink>
+              </>
+            ) : (
+              <>
+                <NavLink 
+                  to="/perfil" 
+                  className={({ isActive }) => isActive ? 'active' : ''}
+                >
+                  Mi Perfil
+                </NavLink>
+                <NavLink 
+                  to="/mis-pedidos" 
+                  className={({ isActive }) => isActive ? 'active' : ''}
+                >
+                  Mis Pedidos
+                </NavLink>
+                <button 
+                  type="button" 
+                  onClick={handleLogout}
+                >
+                  Cerrar Sesión
+                </button>
+              </>
+            )
+          )}
         </nav>
 
         <button 
