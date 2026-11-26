@@ -1,54 +1,134 @@
-# Backend — Mueblería Hermanos Jota
+# Backend — Mueblería Hermanos Jota (Sprints 5, 6, 7 y 8)
 
-API REST con Node.js + Express que sirve el catálogo de productos al frontend React.
-La descripción general del proyecto y las decisiones de diseño están en el [README principal](../README.md).
+API REST con Node.js + Express + MongoDB (Mongoose), autenticación con **bcrypt** + **JWT** y gestión de pedidos vinculados al usuario.
 
-## Instalación y ejecución
+---
+
+## 1. Variables de Entorno (`backend/.env`)
+
+Crear un archivo `backend/.env` tomando como plantilla [`backend/.env.example`](./.env.example):
+
+```env
+PORT=5000
+MONGODB_URI=mongodb+srv://<usuario>:<password>@cluster0.g3lxdtn.mongodb.net/muebleria_jota?retryWrites=true&w=majority
+JWT_SECRET=tu_clave_secreta_jwt_muy_segura
+JWT_EXPIRES_IN=7d
+```
+
+| Variable | Descripción |
+|---|---|
+| `PORT` | Puerto del servidor Express (por defecto `5000`). |
+| `MONGODB_URI` | Cadena de conexión a MongoDB Atlas. |
+| `JWT_SECRET` | Clave secreta para firmar y verificar los JSON Web Tokens (`JWT`). |
+| `JWT_EXPIRES_IN` | Tiempo de validez del token (por defecto `7d`). |
+
+---
+
+## 2. Instalación, Seed y Tests
 
 ```bash
 cd backend
 npm install
-npm start        # http://localhost:5000
-# o, con recarga automática:
-npm run dev
+npm run seed     # (Opcional) Recarga los 11 productos iniciales en MongoDB
+npm start        # Inicia servidor en http://localhost:5000
+npm run dev      # Inicia con nodemon
+npm test         # Ejecuta suites de tests (Productos CRUD + Auth JWT + Pedidos)
 ```
 
-El puerto se puede cambiar con la variable `PORT` (por defecto 5000).
+---
 
-## Tests
+## 3. Documentación de Endpoints (Guía para Integrantes Día 2 y Día 3)
 
-```bash
-npm test
+### A. Autenticación (`/api/auth`)
+
+#### 1. Registro de usuario
+- **Ruta:** `POST /api/auth/registro` *(alias disponible: `POST /api/auth/register`)*
+- **Body (JSON):**
+  ```json
+  {
+    "nombre": "Ana Pérez",
+    "email": "ana@ejemplo.com",
+    "password": "miPassword123"
+  }
+  ```
+- **Respuesta exitosa (`201 Created`):**
+  ```json
+  {
+    "mensaje": "Usuario registrado exitosamente.",
+    "token": "eyJhbGciOiJIUzI1NiIs...",
+    "usuario": {
+      "_id": "674...",
+      "id": "674...",
+      "nombre": "Ana Pérez",
+      "email": "ana@ejemplo.com",
+      "rol": "cliente"
+    },
+    "user": { ... }
+  }
+  ```
+
+#### 2. Login de usuario
+- **Ruta:** `POST /api/auth/login`
+- **Body (JSON):**
+  ```json
+  {
+    "email": "ana@ejemplo.com",
+    "password": "miPassword123"
+  }
+  ```
+- **Respuesta exitosa (`200 OK`):** Devuelve `{ mensaje, token, usuario, user }`.
+
+#### 3. Perfil del usuario autenticado (Ruta Protegida)
+- **Ruta:** `GET /api/auth/perfil` *(alias disponible: `GET /api/auth/me`)*
+- **Header requerido:**
+  ```http
+  Authorization: Bearer <token>
+  ```
+- **Respuesta exitosa (`200 OK`):** Datos del usuario logueado (`_id`, `nombre`, `email`, `rol`, `usuario`). Si no hay token o es inválido devuelve `401 Unauthorized`.
+
+---
+
+### B. Pedidos (`/api/pedidos`) — *Rutas Protegidas con JWT*
+
+Todas las rutas de `/api/pedidos` (alias `/api/orders`) exigen el header:
+```http
+Authorization: Bearer <token>
 ```
 
-Usa Jest y Supertest para probar la API directamente, sin necesidad de tener el servidor corriendo.
+#### 1. Crear Pedido ("Finalizar Compra")
+- **Ruta:** `POST /api/pedidos`
+- **Header:** `Authorization: Bearer <token>`
+- **Body (JSON):**
+  ```json
+  {
+    "items": [
+      {
+        "id": "674...",
+        "nombre": "Aparador Uspallata",
+        "precio": 890000,
+        "cantidad": 1,
+        "imagen": "img/aparador-uspallata.png"
+      }
+    ],
+    "total": 890000
+  }
+  ```
+  *(Nota: `total` se calcula automáticamente en el backend si no se envía).*
+- **Respuesta exitosa (`201 Created`):** Objeto del pedido creado en MongoDB vinculado a `usuario`.
 
-## Endpoints
+#### 2. Listar Pedidos del Usuario Logueado (Para vista `/mis-pedidos`)
+- **Ruta:** `GET /api/pedidos/mis-pedidos` *(o `GET /api/pedidos`)*
+- **Header:** `Authorization: Bearer <token>`
+- **Respuesta exitosa (`200 OK`):** Array con los pedidos del usuario autenticado ordenados del más reciente al más antiguo.
 
-| Método | Ruta                 | Respuesta                                                        |
-|--------|----------------------|------------------------------------------------------------------|
-| GET    | `/api/productos`     | 200 — array JSON con todos los productos                         |
-| GET    | `/api/productos/:id` | 200 — producto / 404 si no existe / 400 si el id no es numérico  |
+---
 
-`GET /api/productos` acepta filtros opcionales: `?categoria=Living` y `?busqueda=mesa`.
+### C. Productos CRUD (`/api/productos`)
 
-## Estructura
-
-```
-backend/
-├── server.js                   # Configuración de Express y middlewares globales
-├── data/productos.js           # Array de objetos con los 11 productos
-├── routes/productos.routes.js  # express.Router con las rutas de productos
-├── middlewares/
-│   ├── logger.js               # Loguea método y URL de cada petición
-│   └── errorHandler.js         # Manejador de 404 y manejador de errores centralizado
-└── test/
-    └── productos.test.js       # Tests de la API (Jest + Supertest)
-```
-
-## Notas
-
-- **Orden de middlewares:** `logger` → `cors` → `express.json()` → rutas → 404 → errores. El logger va primero para registrar toda petición, incluso las que fallan.
-- **Errores en JSON:** todos los errores (404, 400, 500) responden con `{ error, codigo, mensaje }`.
-- **CORS:** habilitado porque el frontend (puerto 5173) y la API (puerto 5000) corren en orígenes distintos.
-- **Imágenes:** el campo `imagen` guarda una ruta relativa (`img/...`); los archivos están en `client/public/img`.
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/api/productos` | Lista todos los productos de MongoDB (acepta `?categoria=` y `?busqueda=`) |
+| `GET` | `/api/productos/:id` | Obtiene un producto por su `_id` |
+| `POST` | `/api/productos` | Crea un producto (`201 Created`) |
+| `PUT` | `/api/productos/:id` | Actualiza un producto existente por `_id` |
+| `DELETE` | `/api/productos/:id` | Elimina un producto por `_id` |

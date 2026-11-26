@@ -1,7 +1,7 @@
 /* ==========================================================================
    RUTAS DE AUTENTICACIÓN (REGISTRO, LOGIN Y PERFIL CON BCRYPT + JWT)
-   Montado en server.js bajo /api/auth
-   Consigna Final Sprint 7 y 8 — Día 1 (Integrante 1)
+   Montado en server.js bajo /api/auth 
+   Consigna Final Sprint 7 y 8 
    ========================================================================== */
 
 const express = require('express');
