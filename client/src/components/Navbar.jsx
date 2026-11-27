@@ -57,20 +57,12 @@ export default function Navbar({ onShowToast }) {
 
           {!loading && (
             !isAuthenticated ? (
-              <>
-                <NavLink
-                  to="/login"
-                  className={({ isActive }) => isActive ? 'active' : ''}
-                >
-                  Ingresar
-                </NavLink>
-                <NavLink
-                  to="/registro"
-                  className={({ isActive }) => isActive ? 'active' : ''}
-                >
-                  Crear Cuenta
-                </NavLink>
-              </>
+              <NavLink
+                to="/login"
+                className={({ isActive }) => isActive ? 'active' : ''}
+              >
+                Ingresar
+              </NavLink>
             ) : (
               <>
                 <NavLink
