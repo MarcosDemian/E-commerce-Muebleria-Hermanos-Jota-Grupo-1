@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import { API_PRODUCTOS } from '../config';
 
-export default function ProductDetail({ onAddToCart, onShowToast }) {
+export default function ProductDetail({ onShowToast }) {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +37,13 @@ export default function ProductDetail({ onAddToCart, onShowToast }) {
         setLoading(false);
       });
   }, [id]);
+
+  const handleAdd = () => {
+    addToCart(producto, cantidad);
+    if (onShowToast) {
+      onShowToast(`"${producto.nombre}" agregado al carrito`);
+    }
+  };
 
   const handleDelete = async () => {
     try {
@@ -125,9 +134,9 @@ export default function ProductDetail({ onAddToCart, onShowToast }) {
 
             <div className="product-qty-selector">
               <label htmlFor="detail-qty">Cantidad:</label>
-              <select 
-                id="detail-qty" 
-                value={cantidad} 
+              <select
+                id="detail-qty"
+                value={cantidad}
                 onChange={(e) => setCantidad(parseInt(e.target.value, 10))}
               >
                 <option value={1}>1 unidad</option>
@@ -138,23 +147,23 @@ export default function ProductDetail({ onAddToCart, onShowToast }) {
               </select>
             </div>
 
-            <button 
-              className="button button-primary" 
+            <button
+              className="button button-primary"
               style={{ width: '100%', marginBottom: '1rem' }}
-              onClick={() => onAddToCart(producto, cantidad)}
+              onClick={handleAdd}
             >
               🛒 AÑADIR AL CARRITO
             </button>
 
             <div className="admin-detail-actions" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <Link 
+              <Link
                 to={`/admin/editar-producto/${producto._id || producto.id}`}
                 className="button button-secondary"
                 style={{ flex: 1, textAlign: 'center' }}
               >
                 ✏️ EDITAR PRODUCTO
               </Link>
-              <button 
+              <button
                 type="button"
                 className="button button-secondary"
                 style={{ flex: 1, borderColor: 'var(--dusty)', color: 'var(--dusty)' }}
@@ -187,11 +196,14 @@ export default function ProductDetail({ onAddToCart, onShowToast }) {
       </div>
 
       {confirmDeleteOpen && (
-        <div className="cart-confirm-overlay" onClick={(e) => {
-          if (e.target.classList.contains('cart-confirm-overlay')) {
-            setConfirmDeleteOpen(false);
-          }
-        }}>
+        <div
+          className="cart-confirm-overlay"
+          onClick={(e) => {
+            if (e.target.classList.contains('cart-confirm-overlay')) {
+              setConfirmDeleteOpen(false);
+            }
+          }}
+        >
           <div className="cart-confirm-modal" role="dialog" aria-modal="true">
             <h3>¿Eliminar producto?</h3>
             <p>Se eliminará permanentemente <strong>{producto.nombre}</strong> de la base de datos MongoDB.</p>
@@ -199,8 +211,8 @@ export default function ProductDetail({ onAddToCart, onShowToast }) {
               <button className="button button-secondary" onClick={() => setConfirmDeleteOpen(false)}>
                 Cancelar
               </button>
-              <button 
-                className="button button-primary" 
+              <button
+                className="button button-primary"
                 style={{ background: '#a33b2a' }}
                 onClick={handleDelete}
                 disabled={eliminando}
