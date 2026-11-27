@@ -10,13 +10,12 @@ import ContactForm from './components/ContactForm';
 import CartDrawer from './components/CartDrawer';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import MyOrders from './pages/MyOrders';
 import { API_PRODUCTOS } from './config';
-
-const CART_STORAGE_KEY = 'hj_cart_items_v2';
 
 function HomeView() {
   const navigate = useNavigate();
@@ -54,8 +53,8 @@ function HomeView() {
             cotidianos, combinando herencia, innovación y una mirada consciente
             sobre los materiales.
           </p>
-          <button 
-            className="button button-primary" 
+          <button
+            className="button button-primary"
             onClick={() => navigate('/productos')}
           >
             VER COLECCIÓN
@@ -70,8 +69,8 @@ function HomeView() {
               <p className="eyebrow">SELECCIÓN HERMANOS JOTA</p>
               <h2>Piezas destacadas</h2>
             </div>
-            <button 
-              className="text-link" 
+            <button
+              className="text-link"
               onClick={() => navigate('/productos')}
             >
               Ver catálogo completo →
@@ -90,9 +89,9 @@ function HomeView() {
               </div>
             ) : (
               destacados.map(p => (
-                <ProductCard 
-                  key={p._id || p.id} 
-                  producto={p} 
+                <ProductCard
+                  key={p._id || p.id}
+                  producto={p}
                 />
               ))
             )}
@@ -161,23 +160,7 @@ function HomeView() {
 }
 
 export default function App() {
-  const navigate = useNavigate();
-
-  const [cart, setCart] = useState(() => {
-    try {
-      const saved = localStorage.getItem(CART_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
-
-  useEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-  }, [cart]);
 
   const showToast = (msg) => {
     setToastMsg(msg);
@@ -186,130 +169,63 @@ export default function App() {
     }, 3000);
   };
 
-  const handleAddToCart = (producto, cantidad = 1) => {
-    const prodId = producto._id || producto.id;
-    setCart(prevCart => {
-      const idx = prevCart.findIndex(item => item.id === prodId);
-      if (idx > -1) {
-        const nextCart = [...prevCart];
-        nextCart[idx] = {
-          ...nextCart[idx],
-          cantidad: nextCart[idx].cantidad + cantidad
-        };
-        return nextCart;
-      } else {
-        return [
-          ...prevCart,
-          {
-            id: prodId,
-            nombre: producto.nombre,
-            precio: producto.precio,
-            imagen: producto.imagenUrl || producto.imagen || 'img/aparador-uspallata.png',
-            cantidad: cantidad
-          }
-        ];
-      }
-    });
-
-    showToast(`"${producto.nombre}" agregado al carrito`);
-    setIsCartOpen(true);
-  };
-
-  const handleUpdateQty = (id, delta) => {
-    setCart(prevCart => {
-      return prevCart.map(item => {
-        if (item.id === id) {
-          const newQty = item.cantidad + delta;
-          return newQty > 0 ? { ...item, cantidad: newQty } : null;
-        }
-        return item;
-      }).filter(Boolean);
-    });
-  };
-
-  const handleRemoveItem = (id) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== id));
-    showToast('Producto eliminado del carrito');
-  };
-
-  const handleClearCart = () => {
-    setCart([]);
-  };
-
-  const totalItemsCount = cart.reduce((acc, item) => acc + item.cantidad, 0);
-
   return (
     <AuthProvider>
-      <div className="app-layout">
-        <Navbar 
-          cartCount={totalItemsCount} 
-          onOpenCart={() => setIsCartOpen(true)}
-          onShowToast={showToast}
-        />
+      <CartProvider>
+        <div className="app-layout">
+          <Navbar onShowToast={showToast} />
 
-        <main>
-          <Routes>
-            <Route path="/" element={<HomeView />} />
-            <Route path="/productos" element={<ProductList />} />
-            <Route 
-              path="/productos/:id" 
-              element={
-                <ProductDetail 
-                  onAddToCart={handleAddToCart}
-                  onShowToast={showToast}
-                />
-              } 
-            />
-            <Route path="/contacto" element={<ContactForm />} />
-            <Route 
-              path="/admin/crear-producto" 
-              element={<ProductForm mode="create" onShowToast={showToast} />} 
-            />
-            <Route 
-              path="/admin/editar-producto/:id" 
-              element={<ProductForm mode="edit" onShowToast={showToast} />} 
-            />
+          <main>
+            <Routes>
+              <Route path="/" element={<HomeView />} />
+              <Route path="/productos" element={<ProductList />} />
+              <Route
+                path="/productos/:id"
+                element={<ProductDetail onShowToast={showToast} />}
+              />
+              <Route path="/contacto" element={<ContactForm />} />
+              <Route
+                path="/admin/crear-producto"
+                element={<ProductForm mode="create" onShowToast={showToast} />}
+              />
+              <Route
+                path="/admin/editar-producto/:id"
+                element={<ProductForm mode="edit" onShowToast={showToast} />}
+              />
 
-            {/* Rutas Públicas de Autenticación */}
-            <Route path="/login" element={<Login onShowToast={showToast} />} />
-            <Route path="/registro" element={<Register onShowToast={showToast} />} />
+              {/* Rutas Públicas de Autenticación */}
+              <Route path="/login" element={<Login onShowToast={showToast} />} />
+              <Route path="/registro" element={<Register onShowToast={showToast} />} />
 
-            {/* Rutas Protegidas (requieren JWT activo) */}
-            <Route 
-              path="/perfil" 
-              element={
-                <ProtectedRoute>
-                  <Profile onShowToast={showToast} />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="/mis-pedidos" 
-              element={
-                <ProtectedRoute>
-                  <MyOrders />
-                </ProtectedRoute>
-              } 
-            />
-          </Routes>
-        </main>
+              {/* Rutas Protegidas (requieren JWT activo) */}
+              <Route
+                path="/perfil"
+                element={
+                  <ProtectedRoute>
+                    <Profile onShowToast={showToast} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/mis-pedidos"
+                element={
+                  <ProtectedRoute>
+                    <MyOrders />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </main>
 
-        <Footer />
+          <Footer />
 
-        <CartDrawer 
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-          items={cart}
-          onUpdateQty={handleUpdateQty}
-          onRemoveItem={handleRemoveItem}
-          onClearCart={handleClearCart}
-          onGoToCatalog={() => navigate('/productos')}
-        />
+          <CartDrawer onShowToast={showToast} />
 
-        <div className={`toast-notification ${toastMsg ? 'show' : ''}`}>
-          {toastMsg}
+          <div className={`toast-notification ${toastMsg ? 'show' : ''}`}>
+            {toastMsg}
+          </div>
         </div>
-      </div>
+      </CartProvider>
     </AuthProvider>
   );
 }
