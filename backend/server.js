@@ -7,7 +7,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const User = require('./models/User');
 
 const logger = require('./middlewares/logger');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
@@ -15,6 +14,7 @@ const productosRoutes = require('./routes/productos.routes');
 const authRoutes = require('./routes/auth.routes');
 const pedidosRoutes = require('./routes/pedidos.routes');
 const Product = require('./models/Product');
+const User = require('./models/User');
 const productosIniciales = require('./data/productos');
 
 const app = express();
@@ -54,7 +54,7 @@ app.use('/api/orders', pedidosRoutes); // Alias de compatibilidad
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Función para conectar a MongoDB y poblar catálogo inicial si está vacío
+// Función para conectar a MongoDB, poblar catálogo inicial y crear admin si corresponde
 async function connectDB() {
     if (!MONGODB_URI) {
         console.error('❌ Error: MONGODB_URI no está definida en las variables de entorno (.env).');
@@ -83,6 +83,23 @@ async function connectDB() {
         }));
         await Product.insertMany(docs);
         console.log(`🌱 Catálogo inicial cargado automáticamente (${docs.length} productos).`);
+    }
+
+    // Crear usuario administrador desde variables de entorno si no existe
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (adminEmail && adminPassword) {
+        const adminExiste = await User.findOne({ email: adminEmail.trim().toLowerCase() });
+        if (!adminExiste) {
+            await User.create({
+                nombre: 'Administrador Hermanos Jota',
+                email: adminEmail.trim().toLowerCase(),
+                password: adminPassword,
+                rol: 'admin'
+            });
+            console.log(`👑 Usuario admin creado automáticamente (${adminEmail})`);
+        }
     }
 }
 
