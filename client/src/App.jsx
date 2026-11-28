@@ -184,13 +184,23 @@ export default function App() {
                 element={<ProductDetail onShowToast={showToast} />}
               />
               <Route path="/contacto" element={<ContactForm />} />
+
+              {/* Rutas Protegidas solo para Admin */}
               <Route
                 path="/admin/crear-producto"
-                element={<ProductForm mode="create" onShowToast={showToast} />}
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <ProductForm mode="create" onShowToast={showToast} />
+                  </ProtectedRoute>
+                }
               />
               <Route
                 path="/admin/editar-producto/:id"
-                element={<ProductForm mode="edit" onShowToast={showToast} />}
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <ProductForm mode="edit" onShowToast={showToast} />
+                  </ProtectedRoute>
+                }
               />
 
               {/* Rutas Públicas de Autenticación */}
