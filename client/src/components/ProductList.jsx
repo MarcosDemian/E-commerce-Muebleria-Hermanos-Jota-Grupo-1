@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
+import { useAuth } from '../context/AuthContext';
 import { API_URL, API_PRODUCTOS } from '../config';
 
 export default function ProductList() {
+  const { isAdmin } = useAuth();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,9 +52,11 @@ export default function ProductList() {
             <h1>El catálogo</h1>
             <p>Descubrí piezas pensadas para acompañarte durante años.</p>
           </div>
-          <Link to="/admin/crear-producto" className="button button-primary">
-            + NUEVO PRODUCTO
-          </Link>
+          {isAdmin && (
+            <Link to="/admin/crear-producto" className="button button-primary">
+              + NUEVO PRODUCTO
+            </Link>
+          )}
         </div>
       </section>
 
@@ -109,9 +113,9 @@ export default function ProductList() {
             )}
 
             {!loading && !error && productosFiltrados.map(producto => (
-              <ProductCard 
-                key={producto._id || producto.id} 
-                producto={producto} 
+              <ProductCard
+                key={producto._id || producto.id}
+                producto={producto}
               />
             ))}
           </div>
