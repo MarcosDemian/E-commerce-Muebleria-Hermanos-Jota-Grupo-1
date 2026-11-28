@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { API_PRODUCTOS } from '../config';
 
 export default function ProductDetail({ onShowToast }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const { isAdmin } = useAuth();
 
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -155,24 +157,26 @@ export default function ProductDetail({ onShowToast }) {
               🛒 AÑADIR AL CARRITO
             </button>
 
-            <div className="admin-detail-actions" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
-              <Link
-                to={`/admin/editar-producto/${producto._id || producto.id}`}
-                className="button button-secondary"
-                style={{ flex: 1, textAlign: 'center' }}
-              >
-                ✏️ EDITAR PRODUCTO
-              </Link>
-              <button
-                type="button"
-                className="button button-secondary"
-                style={{ flex: 1, borderColor: 'var(--dusty)', color: 'var(--dusty)' }}
-                onClick={() => setConfirmDeleteOpen(true)}
-                disabled={eliminando}
-              >
-                {eliminando ? 'ELIMINANDO...' : '🗑️ ELIMINAR'}
-              </button>
-            </div>
+            {isAdmin && (
+              <div className="admin-detail-actions" style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <Link
+                  to={`/admin/editar-producto/${producto._id || producto.id}`}
+                  className="button button-secondary"
+                  style={{ flex: 1, textAlign: 'center' }}
+                >
+                  ✏️ EDITAR PRODUCTO
+                </Link>
+                <button
+                  type="button"
+                  className="button button-secondary"
+                  style={{ flex: 1, borderColor: 'var(--dusty)', color: 'var(--dusty)' }}
+                  onClick={() => setConfirmDeleteOpen(true)}
+                  disabled={eliminando}
+                >
+                  {eliminando ? 'ELIMINANDO...' : '🗑️ ELIMINAR'}
+                </button>
+              </div>
+            )}
 
             {producto.detalles && Object.keys(producto.detalles).length > 0 && (
               <div className="detail-specs">
