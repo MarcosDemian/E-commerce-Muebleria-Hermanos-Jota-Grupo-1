@@ -15,7 +15,7 @@ Aplicación de comercio electrónico completa con arquitectura **MERN** (MongoDB
 ## 🚀 Despliegue (Deploy)
 
 - 🌐 **Frontend (Vercel):** <https://e-commerce-muebleria-hermanos-jota-five.vercel.app/>
-- ⚙️ **Backend API (Render):** <https://tu-backend-en-render.onrender.com/api/productos> *(Reemplazar con la URL definitiva de tu servicio en Render)*
+- ⚙️ **Backend API (Render):** <https://e-commerce-muebleria-hermanos-jota-grupo.onrender.com/>
 - 🗄️ **Base de Datos:** MongoDB Atlas
 
 ---
