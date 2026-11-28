@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
 export default function Navbar({ onShowToast }) {
-  const { isAuthenticated, logout, loading } = useAuth();
+  const { isAuthenticated, isAdmin, logout, loading } = useAuth();
   const { totalItemsCount, openCart } = useCart();
   const navigate = useNavigate();
 
@@ -48,12 +48,15 @@ export default function Navbar({ onShowToast }) {
           >
             Contacto
           </NavLink>
-          <NavLink
-            to="/admin/crear-producto"
-            className={({ isActive }) => isActive ? 'active' : ''}
-          >
-            + Crear Producto
-          </NavLink>
+
+          {!loading && isAdmin && (
+            <NavLink
+              to="/admin/crear-producto"
+              className={({ isActive }) => isActive ? 'active' : ''}
+            >
+              + Crear Producto
+            </NavLink>
+          )}
 
           {!loading && (
             !isAuthenticated ? (
